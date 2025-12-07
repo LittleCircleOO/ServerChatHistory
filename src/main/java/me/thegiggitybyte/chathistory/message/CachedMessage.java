@@ -1,16 +1,17 @@
 package me.thegiggitybyte.chathistory.message;
 
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CachedMessage {
-    private final Text message;
-    
-    public CachedMessage(Text message) {
+    private final Component message;
+
+    public CachedMessage(Component message) {
         this.message = message;
     }
-    
-    public void send(ServerPlayerEntity player) {
-        player.sendMessage(message, false);
+
+    public void send(ServerPlayer player) {
+        // 'false' meant system message in older versions; sendSystemMessage implies this now.
+        player.sendSystemMessage(message);
     }
 }
