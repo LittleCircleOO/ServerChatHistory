@@ -2,7 +2,6 @@ package me.thegiggitybyte.chathistory.mixin;
 
 import me.thegiggitybyte.chathistory.ChatHistory;
 import me.thegiggitybyte.chathistory.compat.StyledChatCompat;
-import me.thegiggitybyte.chathistory.message.CachedMessage;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.Component;
@@ -28,15 +27,14 @@ public class PlayerManagerMixin {
             at = @At("HEAD"))
     public void cacheGameMessage(Component message, Function<ServerPlayer, Component> playerMessageFactory, boolean overlay, CallbackInfo ci) {
         if (overlay) return;
-        ChatHistory.MESSAGE_CACHE.add(new CachedMessage(message));
+        ChatHistory.cache(message);
     }
 
     @Inject(method = "broadcastChatMessage(Lnet/minecraft/network/chat/PlayerChatMessage;Ljava/util/function/Predicate;Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/network/chat/ChatType$Bound;)V",
             at = @At("HEAD"))
     public void cachePlayerMessage(PlayerChatMessage message, Predicate<ServerPlayer> filterPredicate, @Nullable ServerPlayer sender, ChatType.Bound params, CallbackInfo ci) {
         Component styled = StyledChatCompat.getFormatted(message);
-        Component payload = styled != null ? styled : params.decorate(message.decoratedContent());
-        ChatHistory.MESSAGE_CACHE.add(new CachedMessage(payload));
+        ChatHistory.cache(styled != null ? styled : params.decorate(message.decoratedContent()));
     }
 
     @Inject(method = "placeNewPlayer", at = @At("TAIL"))
@@ -45,7 +43,7 @@ public class PlayerManagerMixin {
             , CommonListenerCookie clientData
             //?}
             , CallbackInfo ci) {
-        for (CachedMessage message : ChatHistory.MESSAGE_CACHE) {
+        for (var message : ChatHistory.MESSAGE_CACHE) {
             message.send(player);
         }
     }

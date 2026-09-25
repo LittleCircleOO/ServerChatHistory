@@ -10,6 +10,10 @@ public class CachedMessage {
         this.message = message;
     }
 
+    public Component component() {
+        return message;
+    }
+
     public void send(ServerPlayer player) {
         // 'false' meant system message in older versions; sendSystemMessage implies this now.
         player.sendSystemMessage(message);
