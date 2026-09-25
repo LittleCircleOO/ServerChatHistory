@@ -43,8 +43,14 @@ public class PlayerManagerMixin {
             , CommonListenerCookie clientData
             //?}
             , CallbackInfo ci) {
+        if (!ChatHistory.canView(player)) {
+            return;
+        }
+
+        ChatHistory.sendSeparator(player, ChatHistory.HISTORY_START);
         for (var message : ChatHistory.MESSAGE_CACHE) {
             message.send(player);
         }
+        ChatHistory.sendSeparator(player, ChatHistory.HISTORY_END);
     }
 }

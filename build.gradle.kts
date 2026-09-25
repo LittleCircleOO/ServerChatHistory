@@ -11,10 +11,15 @@ val requiredJava: JavaVersion = when {
     else -> JavaVersion.VERSION_17
 }
 
+repositories {
+    maven("https://maven.nucleoid.xyz") { name = "Nucleoid" }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:${sc.current.version}")
     loomx.applyMojangMappings()
     modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    include(modImplementation(sc.properties["deps.placeholder_api"] as String)!!)
 }
 
 java {
